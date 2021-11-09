@@ -1,0 +1,265 @@
+<!--
+
+ FILE			:myEditor.html
+ PROJECT		:PROG2001-20F Web Design and Development
+ PRPGRAMMER		:Will Wei& Mu Tong
+ FIRST VERSION	:2020-12-10
+ DESCRIPTION	:This file contains an HTML file that is 
+				the client side of the online text editor.
+ 
+--> 
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Online Editor</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript">
+		$(document).ready(pageReady);
+		var JSONObject;
+		var content;
+		var currentFile = "";
+		var showSaveAs = 2;
+		// -----------------------------------------------------------------------------------
+		// the pageReady() function sets up the jQuery action to respond to the button click event
+		// -----------------------------------------------------------------------------------
+		function pageReady()
+		{
+			$("#fileListbtn").hover(showFileList);
+		}
+
+		// FUNCTION : showFileContent
+		// DESCRIPTION :
+		// This function will use JQuery to make an AJAX
+		// call to populate the file content on the client's editor area
+		// PARAMETERS :
+		// fileName
+		// RETURN:
+		// none
+		function showFileContent(fileName)
+		{
+		  currentFile = fileName;
+		  $.get("openFile.php?fileName="+fileName,function(data)
+		  {
+			   $("#editor").val(data);
+		  })
+		  
+		}
+		// FUNCTION : showFileContent
+		// DESCRIPTION :
+		// This function will use JQuery to make an AJAX
+		// call to populate the file list on the client
+		// PARAMETERS :
+		// fileName
+		// RETURN:
+		// none
+		function showFileList()
+		{
+		  $.get("getFileList.php",function(data)
+		  {
+			  //var myobj = JSON.parse(data);
+			  $("#fileList").html(data);
+		  })
+		  
+		}
+
+		// FUNCTION : showSaveAsMenu
+		// DESCRIPTION :
+		// This function make the saveAs menu display/disappear
+		// PARAMETERS :
+		// none
+		// RETURN:
+		// none
+		function showSaveAsMenu()
+		{
+			if(showSaveAs%2 == 0)
+			{
+				saveAsMenu.style.display = "block";
+			}
+			if(showSaveAs%2 == 1)
+			{
+				saveAsMenu.style.display = "none";
+			}
+			showSaveAs++;
+		}
+		
+		
+		// FUNCTION : saveFile
+		// DESCRIPTION :
+		// This function will get the file name and value from editor(textarea) and
+		// process the data(make the content can change lines). Then it
+		// will use use JQuery to make an AJAX call to save the file content
+		// in the file
+		// PARAMETERS :
+		// none
+		// RETURN:
+		// none
+		function saveFile()
+		{
+			if(currentFile == "")
+			{
+				alert("You should select a file first");
+			}
+			else
+			{
+				var content = $("#editor").val().replace(/\r?\n/g,"\\n").toString();
+				JSONObject = '{"name":"'+currentFile+'","content":"'+content+'"}';
+				$.get("saveFile.php?data="+JSONObject,
+				function(data)
+				{
+					$("#editor").val(data);
+				});
+			}
+			
+		}
+		// FUNCTION : saveAsFile
+		// DESCRIPTION :
+		// This function will get the file name from save as menu, get the file
+		// value from editor(textarea) and
+		// process the data(make the content can change lines). Then it
+		// will use use JQuery to make an AJAX call to save the file content
+		// in the file
+		// PARAMETERS :
+		// none
+		// RETURN:
+		// none
+		function saveAsFile()
+		{
+			var name = $("#name").val();
+			if(name == "")
+			{
+				alert("file name cannot be blank");
+			}
+			else
+			{
+				var fileName = "myFiles/"+$("#name").val()+$("#type").val();
+				var content = $("#editor").val().replace(/\r?\n/g,"\\n").toString();
+				JSONObject = '{"name":"'+fileName+'","content":"'+content+'"}';
+				$.get("saveFile.php?data="+JSONObject,
+				function(data)
+				{
+					$("#editor").val(data);
+				});
+				saveAsMenu.style.display = "none";
+				showSaveAs++;
+			}
+			
+		}
+		</script>
+
+		<style>
+			body{
+				background-color: gold;
+				color: blue;
+			}
+			table{
+				margin: 0 auto;
+			}
+			.header{
+			text-align: center;
+			}
+			.nav {
+			  float: left;
+			  width: 20%;
+			  height: 100%;
+			  background: #ccc;
+			  padding: 20px;
+			}
+			
+			.dropbtn {
+			  background-color: blue;
+			  color: white;
+			  padding: 10px 24px;
+			  font-size: 15px;
+			  border: none;
+			}
+			
+
+			.dropdown {
+			  position: relative;
+			  display: inline-block;
+			}
+
+			.dropdown-content {
+			  display: none;
+			  position: absolute;
+			  background-color: blue;
+			  color: white;
+			  min-width: 160px;
+			  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			  z-index: 1;
+			}
+
+			.dropdown-content button {
+			  border: none;
+			  background-color: blue;
+			  color: white;
+			  padding: 10px 24px;
+			  font-size: 15px;
+			  text-decoration: none;
+			  display: block;
+			}
+
+			.dropdown-content button:hover {background-color: #337FFF;}
+
+			.dropdown:hover .dropdown-content {display: block;}
+
+			.dropdown:hover .dropbtn {background-color: #337FFF;}
+			
+			.editor {
+			  width: 400px;
+			  height: 400px;
+			  border: 1px solid blue;
+			  box-sizing: border-box;
+			}
+			
+			.button{
+			  background-color: blue;
+			  color: white;
+			  padding: 10px 24px;
+			  font-size: 15px;
+			  border: none;
+			}
+			.button:hover {background-color: #337FFF;}
+		</style>
+	</head>
+	
+	<body>
+		<div class="header">
+			<h1>Online Editor</h1>
+		</div>
+		<table name="myTable" id="myTable">
+			<tr>
+				<td>
+					<div class="dropdown">
+						<button name="fileListbtn" id="fileListbtn" class="dropbtn">Select File</button> 
+						<div class="dropdown-content" name="fileList" id="fileList">
+						</div>
+					</div>
+					<input type="button" class="button" name="files" id="files" onclick="saveFile()" value="Save File"></input>
+					<button class="button" name="saveButton" id="saveButton" onclick="showSaveAsMenu()" >Save As</button>
+				</td>
+			</tr>
+			<tr id="saveAsMenu" style="display:none">
+				<td>
+					File Name:
+					<input id="name" name="name" type="text"/>
+					File Type:
+					<select id="type">
+						<option value=".txt">.txt</option>
+						<option value=".html">.html</option>
+						<option value=".txt">.htmls</option>
+					</select>
+					<button onclick="saveAsFile()">
+					Save
+					</button>
+				</td>	
+			</tr>
+			<tr>
+				<td>
+					<textarea id="editor" class="editor" contenteditable="true">
+					</textarea>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
