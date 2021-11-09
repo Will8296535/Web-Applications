@@ -1,0 +1,51 @@
+<!--
+
+ FILE			:hiloStart.html
+ PROJECT		:PROG2001-20F Web Design and Development
+ PRPGRAMMER		:Will Wei& Mu Tong
+ FIRST VERSION	:2020-10-21
+ DESCRIPTION	:This file contains an HTML file that uses an HTML <form>
+				 to provide the user's name to a web server.
+ 
+--> 
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>hiloStart</title>
+		<script type="text/javascript" src="js/myJS.js" >
+		</script>
+		<style>
+		body{
+			background-color: gold;
+			color: blue;
+		}
+		table{
+			margin: 0 auto;
+		}
+		.header{
+		text-align: center;
+		}
+		</style>
+	</head>
+	
+	<body>
+		<div class="header">
+			<h1>Hilo Game</h1>
+		</div>
+		<form name="myForm" action="getTheMaxNumber.asp" method="POST" onsubmit="return validateForm()">
+			<table name="myTable" id="myTable" >
+				<tr>
+					<td>What's your name?</td>
+					<td><input id="name" name="name" type="text" /></td>
+					<td><div id="nameError" name="nameError" style="color:red;"></div></td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">
+					<input type="submit" id="submitButton" name="submitButton" value="Next" />
+					</td>
+				</tr>
+			</table>
+			
+		</form>
+	</body>
+</html>
